@@ -8,6 +8,36 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
+var app = utils.getApp()
+var entry = {}
+var output = {}
+var filename = process.env.NODE_ENV === 'production'
+  ? utils.assetsPath('js/[name].js')
+  : utils.assetsPath('js/[name].js')
+
+if (app.isDll) {
+  entry = {
+    dll: ['vue', 'vue-router', './src/style/index.scss', './src/package/index.js']
+  }
+  output = {
+    library: '[name]',
+    path: config.build.assetsRoot,
+    publicPath: config.build.assetsPublicPath,
+    filename: filename,
+    chunkFilename: utils.assetsPath('js/[name].js')
+  }
+} else {
+  entry = {[app.name]: ['./src/app' + path.join(app.path, app.name, '/index.js')]}
+  output = {
+    path: config.build.assetsRoot,
+    filename: filename,
+    publicPath: process.env.NODE_ENV === 'production'
+      ? config.build.assetsPublicPath
+      : config.dev.assetsPublicPath,
+    chunkFilename: utils.assetsPath('js/[name].js')
+  }
+}
+
 const createLintingRule = () => ({
   test: /\.(js|vue)$/,
   loader: 'eslint-loader',
@@ -21,22 +51,18 @@ const createLintingRule = () => ({
 
 module.exports = {
   context: path.resolve(__dirname, '../'),
-  entry: {
-    app: './src/main.js'
-  },
-  output: {
-    path: config.build.assetsRoot,
-    filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
-  },
+  entry: entry,
+  output: output,
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
     }
+  },
+  externals: {
+    'xt': 'xt',
+    'Promise': 'Promise'
   },
   module: {
     rules: [

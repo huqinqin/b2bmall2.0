@@ -3,6 +3,33 @@ const path = require('path')
 const config = require('../config')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('../package.json')
+exports.getAppName = function () {
+  var args = process.argv;
+  console.log(args)
+  try {
+    args = JSON.parse(process.env.npm_config_argv).original;
+  } catch (e) {
+    args = process.argv;
+  }
+  var appName = null;
+  args.forEach(function (item, index) {
+    if (item === '--app' || item === '-app') {
+      appName = args[index + 1];
+    }
+  });
+  return appName;
+}
+exports.getApp = function () {
+  var paraName = exports.getAppName()
+  var appName = (paraName.match(/[^/]*$/) || [])[0] || '';
+  var appPath = paraName.replace(/[^/]*$/, '').replace(/\/$/, '')
+  appPath = path.join('/', appPath)
+  return {
+    name: appName, path: appPath,
+    isDll: appName === 'dll',
+    isApp: appName !== 'dll'
+  }
+}
 
 exports.assetsPath = function (_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production'
