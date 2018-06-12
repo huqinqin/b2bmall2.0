@@ -13,10 +13,18 @@ var proxy = httpProxy.createProxyServer({
   target: 'http://localhost:3000'
 })
 var app = express()
-app.use(servestatic('dev', { redirect: false }))
+app.use(servestatic('dev', { redirect: false,index:'index.html' }))
 app.use(function(req, res, next) {
   proxy.web(req, res)
 })
+
+proxy.on('error', function (err, req, res) {
+  res.writeHead(500, {
+    'Content-Type': 'text/plain'
+  });
+  res.end('Something went wrong. And we are reporting a custom error message.');
+});
+
 var server = http.createServer(app)
 server.listen(4001)
 server.on('error', function(e) {

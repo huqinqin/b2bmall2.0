@@ -30,6 +30,7 @@ app.isApp && (dllRefPlugin = new webpack.DllReferencePlugin({
   context: __dirname,
   manifest: require('./dll.manifest.json')
 }))
+
 var dllPlugin = fnEmpty
 app.isDll && (dllPlugin = new webpack.DllPlugin({
   path: path.join(__dirname, 'dll.manifest.json'),
@@ -72,16 +73,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     dllRefPlugin,
     dllPlugin,
-    compressPlugin,
-    new UglifyJsPlugin({
-      uglifyOptions: {
-        compress: {
-          warnings: false
-        }
-      },
-      sourceMap: false,
-      parallel: true
-    }),
+    //js 压缩先注销
+    //compressPlugin,
     // extract css into its own file
     // new ExtractTextPlugin({
     //   filename: utils.assetsPath('css/[name].[contenthash].css'),
@@ -96,12 +89,13 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
-    new OptimizeCSSPlugin({
-      cssProcessorOptions:{safe:true}
-      // cssProcessorOptions: config.build.productionSourceMap
-      //   ? { safe: true, map: { inline: false } }
-      //   : { safe: true }
-    }),
+    //css压缩先注销
+    // new OptimizeCSSPlugin({
+    //   cssProcessorOptions:{safe:true}
+    //   // cssProcessorOptions: config.build.productionSourceMap
+    //   //   ? { safe: true, map: { inline: false } }
+    //   //   : { safe: true }
+    // }),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
