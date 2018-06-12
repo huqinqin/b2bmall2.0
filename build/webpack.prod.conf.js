@@ -10,12 +10,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-
 const env = require('../config/prod.env')
 var app = utils.getApp()
 if (!app.name) process.exit(-1)
 var fnEmpty = function () {
 }
+
+var copyPlugin = fnEmpty
+app.isApp && (copyPlugin = new CopyWebpackPlugin([
+  {
+    from: path.resolve(__dirname, '../static'),
+    to: config.build.assetsSubDirectory,
+    ignore: ['.*']
+  }
+]))
+
 var dllRefPlugin = fnEmpty
 app.isApp && (dllRefPlugin = new webpack.DllReferencePlugin({
   context: __dirname,
@@ -27,23 +36,7 @@ app.isDll && (dllPlugin = new webpack.DllPlugin({
   name: '[name]',
   context: __dirname,
 }))
-var copyPlugin = fnEmpty
-app.isApp && (copyPlugin = new CopyWebpackPlugin([
-  {
-    from: path.resolve(__dirname, '../static'),
-    to: config.build.assetsSubDirectory,
-    // to: utils.assetsPath('js/beedn.[name].js'),
-    ignore: ['.*']
-  }
-]))
-var copyPlugin = fnEmpty
-app.isDll || app.isCore && (copyPlugin = new CopyWebpackPlugin([
-  {
-    from: path.resolve(__dirname, '../dist'),
-    to: path.resolve(__dirname, '../static'),
-    ignore: ['.*']
-  }
-]))
+
 var compressPlugin = fnEmpty
 compressPlugin = new webpack.optimize.UglifyJsPlugin({
   compress: {
@@ -65,12 +58,12 @@ if (app.isDll) {
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
-      sourceMap: config.build.productionSourceMap,
+      sourceMap: false,
       extract: true,
       usePostCSS: true
     })
   },
-  devtool: config.build.productionSourceMap ? config.build.devtool : false,
+  //devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: outputSetting,
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -86,7 +79,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           warnings: false
         }
       },
-      sourceMap: config.build.productionSourceMap,
+      sourceMap: false,
       parallel: true
     }),
     // extract css into its own file
@@ -113,7 +106,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: config.build.index,
+      //filename: config.build.index,
+      filename: path.resolve(__dirname, '../dist/'+app.name+'.html'),
       template: 'index.html',
       inject: true,
       minify: {
@@ -161,19 +155,20 @@ const webpackConfig = merge(baseWebpackConfig, {
     // }),
 
     // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.build.assetsSubDirectory,
-        ignore: ['.*']
-      }
-    ])
+    // new CopyWebpackPlugin([
+    //   {
+    //     from: path.resolve(__dirname, '../static'),
+    //     to: config.build.assetsSubDirectory,
+    //     ignore: ['.*']
+    //   }
+    // ])
+    copyPlugin
   ]
 })
 
+
 if (config.build.productionGzip) {
   const CompressionWebpackPlugin = require('compression-webpack-plugin')
-
   webpackConfig.plugins.push(
     new CompressionWebpackPlugin({
       asset: '[path].gz[query]',
@@ -193,5 +188,4 @@ if (config.build.bundleAnalyzerReport) {
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
-
 module.exports = webpackConfig
