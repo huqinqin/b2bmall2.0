@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #先变异dll动态库
 npm run build --app dll
 #然后将编译出来的文件copy到dev目录
