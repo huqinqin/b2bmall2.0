@@ -10,7 +10,7 @@ var http = require('http'),
   servestatic = require('serve-static')
 
 var proxy = httpProxy.createProxyServer({
-  target: 'http://192.168.154.237:8780'
+  target: 'http://localhost:8780'
 })
 var app = express()
 app.use(servestatic('dev', { redirect: false,index:'index.html' }))
