@@ -8,6 +8,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      a: 123
+    }
+  }
 }
 </script>
 <style>
