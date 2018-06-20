@@ -2,7 +2,7 @@
   <div class="xt-inpt">
     <template v-if="type === 'text'">
       <input
-        type="text" :placeholder="placeholder" :value="value" :class="{'error': error}" >
+        type="text" :placeholder="placeholder" :value="value" :class="{'error': error}" @blur="onBlur($event.target.value)" @focus="onFocus($event.target.value)" @input="onInput($event.target.value)">
     </template>
     <template v-else-if="type === 'textarea'">
       <textarea name="textarea" id="textarea" cols="60" rows="20" :placeholder="placeholder" :value="value"
@@ -29,6 +29,16 @@
     data() {
       return {}
     },
-    methods: {}
+    methods: {
+      onBlur(value) {
+        this.$emit('blur', value)
+      },
+      onFocus(value) {
+        this.$emit('focus', value)
+      },
+      onInput(value) {
+        this.$emit('input', value)
+      }
+    }
   }
 </script>

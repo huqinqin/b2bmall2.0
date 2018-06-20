@@ -8,7 +8,7 @@
       <button type="button" @click="checkLogin">Login</button>
       <a href="javascript:void(0)">Forgot</a>
     </form>
-    <xt-input></xt-input>
+    <xt-input @input="handleInput" @focus="handleFocus" @blur="handleBlur" placeholder="test"></xt-input>
   </div>
 </template>
 
@@ -38,6 +38,15 @@
         })
       },
       login() {
+      },
+      handleInput() {
+        console.log('input2')
+      },
+      handleFocus() {
+        console.log('focus2')
+      },
+      handleBlur() {
+        console.log('blur2')
       }
     },
     created () {
