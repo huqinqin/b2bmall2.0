@@ -6,9 +6,9 @@
       <label for="password">Password:</label>
       <input type="password" v-model="password" name="password" @keyup.enter="checkLogin">
       <button type="button" @click="checkLogin">Login</button>
-      <a href="javascript:void(0)">Forgot</a>
+      <!--<a href="javascript:void(0)">Forgot</a>-->
     </form>
-    <xt-input @input="handleInput" @focus="handleFocus" @blur="handleBlur" placeholder="test"></xt-input>
+    <!--<xt-input @input="handleInput" @focus="handleFocus" @blur="handleBlur" placeholder="test"></xt-input>-->
   </div>
 </template>
 
@@ -27,8 +27,8 @@
     methods: {
       checkLogin() {
         let param = {
-          value: 'SF001',
-          password: md5('12345678')
+          value: this.account,
+          password: md5(this.password)
         }
         xt.post('/base/acl/lts/login', param).then(data => {
           console.log(data)
